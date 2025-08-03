@@ -1,6 +1,7 @@
 import { Faker, de, ja, en } from "@faker-js/faker";
 import { Review, GenerateOptions, Book } from "../types/types.ts";
 import { createSeededRNG } from "../utils/random.ts";
+import { generateBookCover } from "../utils/coverGenerator.ts";
 
 function getFakerByLocale(lang: string): Faker {
   switch (lang.toLowerCase()) {
@@ -28,8 +29,7 @@ function generateReviews(
     text: faker.lorem.sentence(),
   }));
 }
-
-export function generateBooks(options: GenerateOptions): Book[] {
+export async function generateBooks(options: GenerateOptions): Promise<Book[]> {
   const { seed, page, lang, likes, reviews } = options;
 
   const fullSeed = `${seed}-${page}`;
@@ -39,17 +39,23 @@ export function generateBooks(options: GenerateOptions): Book[] {
   const count = 20;
 
   const books: Book[] = [];
-
   for (let i = 0; i < count; i++) {
+    const isbn = `${Math.floor(rng() * 1e13)}`;
+    const title = faker.lorem.words({ min: 2, max: 5 });
+    const author = faker.person.fullName();
+    const coverBuffer = await generateBookCover(title, author, isbn);
+
+    const coverBase64 = coverBuffer.toString("base64");
+
     books.push({
       index: page * 20 + i + 1,
-      isbn: `${Math.floor(rng() * 1e13)}`,
-      title: faker.lorem.words({ min: 2, max: 5 }),
-      authors: [faker.person.fullName()],
+      isbn,
+      title,
+      authors: [author],
       publisher: faker.company.name(),
       likes,
       reviews: generateReviews(faker, rng, reviews),
-      coverUrl: `https://source.unsplash.com/200x300/?book,cover,${i}`,
+      coverUrl: `data:image/png;base64,${coverBase64}`,
     });
   }
 

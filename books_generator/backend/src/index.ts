@@ -8,6 +8,7 @@ const allowedOrigins = [
   "http://localhost:3100",
   "http://localhost:3000",
   "http://localhost",
+  "https://frontend-production-ed8d.up.railway.app",
 ];
 
 app.use(

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { generateBooks } from "../services/bookService.ts";
 
-export function getBooks(req: Request, res: Response) {
+export async function getBooks(req: Request, res: Response) {
   const {
     seed = "default",
     page = "0",
@@ -10,7 +10,7 @@ export function getBooks(req: Request, res: Response) {
     reviews = "0",
   } = req.query;
 
-  const books = generateBooks({
+  const books = await generateBooks({
     seed: seed.toString(),
     page: parseInt(page.toString(), 10),
     lang: lang.toString(),
