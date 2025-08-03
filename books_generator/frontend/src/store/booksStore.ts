@@ -27,8 +27,6 @@ export const useBooksStore = create<BookState>((set, get) => ({
 
     if (state.loading || !state.hasMore) return [];
 
-    set({ loading: true, error: null });
-
     try {
       const newBooks = await loadBooks(getFetchParams(state, nextPage));
 

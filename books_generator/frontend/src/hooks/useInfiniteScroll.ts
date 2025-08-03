@@ -13,16 +13,17 @@ export function useInfiniteScroll({
   fetchNextPage,
   threshold = 100,
 }: UseInfiniteScrollParams) {
-  const lastScroll = useRef(window.scrollY);
   const throttleTimeout = useRef<number | null>(null);
+  const isFetching = useRef(false); // локальный флаг
 
   useEffect(() => {
     const fetchWithScrollRestore = async () => {
-      lastScroll.current = window.scrollY;
-      await fetchNextPage();
-      requestAnimationFrame(() => {
-        window.scrollTo(0, lastScroll.current);
-      });
+      isFetching.current = true;
+      try {
+        await fetchNextPage();
+      } finally {
+        isFetching.current = false;
+      }
     };
 
     const handleScroll = () => {
@@ -36,7 +37,7 @@ export function useInfiniteScroll({
         const isNearBottom =
           documentHeight - (scrollTop + windowHeight) < threshold;
 
-        if (isNearBottom && !loading && hasMore) {
+        if (isNearBottom && !loading && hasMore && !isFetching.current) {
           fetchWithScrollRestore();
         }
 

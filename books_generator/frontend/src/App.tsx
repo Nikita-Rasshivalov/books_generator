@@ -6,7 +6,6 @@ import { Container } from "./components/layout/Container";
 import BookGallery from "./components/books/BookGallery";
 import BookTable from "./components/books/BookTable";
 import { ContainerFixed } from "./components/layout/ContainerFixed";
-
 export default function App() {
   const {
     books,
@@ -40,9 +39,6 @@ export default function App() {
       </ContainerFixed>
 
       <Container>
-        {loading && <div>Loading...</div>}
-        {error && <div className="text-red-600">Error: {error}</div>}
-
         {!loading && !error && (
           <div className="wrapper">
             {viewMode === "table" ? (

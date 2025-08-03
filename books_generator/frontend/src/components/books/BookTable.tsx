@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Book } from "../../types/types";
 import BookRow from "./BookRow";
-import ErrorMessage from "../layout/ErrorMessage";
 import LoadingIndicator from "../layout/LoadingIndicator";
 import BookTableHeader from "./BookTableHeader";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
@@ -29,27 +28,6 @@ const BookTable = ({
     setExpandedIndex((prev) => (prev === bookIndex ? null : bookIndex));
   };
 
-  if (loading && books.length === 0)
-    return (
-      <div className="flex justify-center py-10">
-        <LoadingIndicator />
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="p-4">
-        <ErrorMessage message={error} />
-      </div>
-    );
-
-  if (books.length === 0)
-    return (
-      <div className="p-6 text-center text-gray-600 dark:text-gray-400">
-        No books found.
-      </div>
-    );
-
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
       <BookTableHeader />
@@ -64,7 +42,8 @@ const BookTable = ({
               onToggle={() => toggleExpand(idx)}
             />
           ))}
-          {hasMore && <LoadingIndicator />}
+
+          {hasMore && !error && <LoadingIndicator />}
         </div>
       </div>
     </div>
