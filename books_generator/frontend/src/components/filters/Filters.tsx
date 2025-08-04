@@ -8,11 +8,7 @@ import ExportCsvButton from "../ExportButton";
 import { BookState, FiltersProps } from "../../types/types";
 import { generateRandomSeed } from "../../utils/generateRandomSeed";
 
-const Filters = ({
-  initialFilters,
-  onResetBooks,
-  onSetParamsBatch,
-}: FiltersProps) => {
+const Filters = ({ initialFilters, onSetParamsBatch }: FiltersProps) => {
   const [localFilters, setLocalFilters] = useState(initialFilters);
   const isFirstRun = useRef(true);
 
@@ -40,7 +36,6 @@ const Filters = ({
     setLocalFilters((f) => ({ ...f, [key]: value }));
 
   const resetFilters = () => {
-    onResetBooks();
     setLocalFilters({
       lang: "en",
       seed: "default",

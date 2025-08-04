@@ -10,6 +10,8 @@ const getFetchParams = (state: BookState, page: number): Params => ({
   page,
 });
 
+let resetInProgress = false;
+
 export const useBooksStore = create<BookState>((set, get) => ({
   books: [],
   page: 0,
@@ -54,9 +56,13 @@ export const useBooksStore = create<BookState>((set, get) => ({
   },
 
   resetBooks: async () => {
+    if (resetInProgress) return;
+    resetInProgress = true;
+
     const state = get();
     const params = getFetchParams(state, 1);
     set({ loading: true, error: null, page: 0, hasMore: true });
+
     try {
       const newBooks = await loadBooks(params);
       set({
@@ -67,6 +73,8 @@ export const useBooksStore = create<BookState>((set, get) => ({
       });
     } catch (error: any) {
       set({ error: error.message || "Failed to load books", loading: false });
+    } finally {
+      resetInProgress = false;
     }
   },
 
@@ -75,6 +83,6 @@ export const useBooksStore = create<BookState>((set, get) => ({
   setParamAndResetBooksBatch: async (params: Partial<BookState>) => {
     set((state) => ({ ...state, ...params }));
     await new Promise((resolve) => setTimeout(resolve, 0));
-    get().resetBooks();
+    await get().resetBooks();
   },
 }));

@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import { useBooksStore } from "./store/booksStore";
-import Filters from "./components/filters/Filters";
-import { Header } from "./components/layout/Header";
-import { Container } from "./components/layout/Container";
+import { useEffect, useRef, useState } from "react";
 import BookGallery from "./components/books/BookGallery";
 import BookTable from "./components/books/BookTable";
+import Filters from "./components/filters/Filters";
+import { Container } from "./components/layout/Container";
 import { ContainerFixed } from "./components/layout/ContainerFixed";
+import { Header } from "./components/layout/Header";
+import { useBooksStore } from "./store/booksStore";
+
 export default function App() {
   const {
     books,
@@ -22,9 +23,13 @@ export default function App() {
   } = useBooksStore();
 
   const [viewMode, setViewMode] = useState<"table" | "gallery">("table");
+  const didResetRef = useRef(false);
 
   useEffect(() => {
-    resetBooks();
+    if (!didResetRef.current) {
+      resetBooks();
+      didResetRef.current = true;
+    }
   }, [resetBooks]);
 
   return (
